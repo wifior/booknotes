@@ -1,0 +1,10 @@
+mysqldump -uroot -p --all-databases > back0919.sql
+scp back0919.sql root@114.55.52.213:/root/
+
+
+show master status;
+
+stop slave;
+change master to master_host='47.96.156.143',master_user='repl',master_password='Mozilla^51zFgHj',master_log_file='mysql_bin.000010',master_log_pos=2739109;
+start slave;
+show slave status\G;
