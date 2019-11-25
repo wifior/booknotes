@@ -62,5 +62,579 @@ debug<info<warn<error
 - 建议选用slf4j + logback，或slf4j + log4j2
 - 日志系统在正常情况下是不会影响应用性能的，但应该注意量，太大量的日志会拖累性能
 
+# 具体使用
+
+- ### log4j
+
+ **1.maven依赖**
+
+```xml
+<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+</dependency>
+```
+
+**2.配置文件(log4j.properties)**
+
+```xml
+log4j.rootLogger = debug, console
+log4j.appender.console = org.apache.log4j.ConsoleAppender
+log4j.appender.console.layout = org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss} %m%n
+```
+
+3.使用
+
+```java
+public class Log4jTest {
+	private static final Logger logger=Logger.getLogger(Log4jTest.class);
+	public static void main(String[] args){
+		if(logger.isTraceEnabled()){
+			logger.debug("log4j trace message");
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("log4j debug message");
+		}
+		if(logger.isInfoEnabled()){
+			logger.debug("log4j info message");
+		}
+	}
+}
+```
+
+
+
+- ### commons-logging与log4j1集成
+
+**1.maven依赖**
+
+```xml
+<dependency>
+	<groupId>commons-logging</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.2</version>
+</dependency>
+<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+</dependency>
+```
+
+**2.配置文件(log4j.properties)**
+
+```xml
+log4j.rootLogger = trace, console
+log4j.appender.console = org.apache.log4j.ConsoleAppender
+log4j.appender.console.layout = org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss} %m%n
+```
+
+**3.具体使用**
+
+```java
+private static Log logger=LogFactory.getLog(Log4jJclTest.class);
+
+public static void main(String[] args){
+	if(logger.isTraceEnabled()){
+		logger.trace("commons-logging-log4j trace message");
+	}
+	if(logger.isDebugEnabled()){
+		logger.debug("commons-logging-log4j debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("commons-logging-log4j info message");
+	}
+}
+```
+
+
+
+- ### slf4j与log4j1集成
+
+1.maven依赖
+
+```xml
+<!-- slf4j -->
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+
+<!-- slf4j-log4j -->
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.7.12</version>
+</dependency>
+
+<!-- log4j -->
+<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+</dependency>
+```
+
+**2.配置文件(log4j.properties)**
+
+```xml
+log4j.rootLogger = debug, console
+log4j.appender.console = org.apache.log4j.ConsoleAppender
+log4j.appender.console.layout = org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss} %m%n
+```
+
+**3.具体使用**
+
+```java
+private static Logger logger=LoggerFactory.getLogger(Log4jSlf4JTest.class);
+
+public static void main(String[] args){
+	if(logger.isDebugEnabled()){
+		logger.debug("slf4j-log4j debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("slf4j-log4j info message");
+	}
+	if(logger.isTraceEnabled()){
+		logger.trace("slf4j-log4j trace message");
+	}
+}
+```
+
+
+
+------
+
+
+
+- ### log4j2
+
+**log4j2分成2个部分**
+
+- log4j-api： 作为日志接口层，用于统一底层日志系统
+- log4j-core : 作为上述日志接口的实现，是一个实际的日志框架
+
+**1.maven依赖**
+
+```xml
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.logging.log4j</groupId>
+	<artifactId>log4j-core</artifactId>
+	<version>2.2</version>
+</dependency>
+```
+
+2.配置文件(log4j2.xml/json/yml)
+
+```xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="debug">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+**3.使用**
+
+```java
+private static final Logger logger=LogManager.getLogger(Log4j2Test.class);
+
+public static void main(String[] args){
+	if(logger.isTraceEnabled()){
+		logger.debug("log4j trace message");
+	}
+	if(logger.isDebugEnabled()){
+		logger.debug("log4j debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.debug("log4j info message");
+	}
+}
+```
+
+
+
+- ### commons-logging与log4j2集成
+
+**1.maven依赖**
+
+```xml
+<dependency>
+	<groupId>commons-logging</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.logging.log4j</groupId>
+	<artifactId>log4j-core</artifactId>
+	<version>2.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-jcl</artifactId>
+    <version>2.2</version>
+</dependency>
+```
+
+**2.配置文件(log4j2.xml)**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="debug">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+**3.具体使用**
+
+```java
+private static Log logger=LogFactory.getLog(Log4j2JclTest.class);
+
+public static void main(String[] args){
+	if(logger.isTraceEnabled()){
+		logger.trace("commons-logging-log4j trace message");
+	}
+	if(logger.isDebugEnabled()){
+		logger.debug("commons-logging-log4j debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("commons-logging-log4j info message");
+	}
+}
+```
+
+------
+
+
+
+- ### slf4j与log4j2集成
+
+1.maven依赖
+
+```xml
+<!-- slf4j -->
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+<!-- log4j2 -->
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.logging.log4j</groupId>
+	<artifactId>log4j-core</artifactId>
+	<version>2.2</version>
+</dependency>
+<!-- log4j-slf4j-impl -->
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-slf4j-impl</artifactId>
+    <version>2.2</version>
+</dependency>
+```
+
+**2.配置文件(log4j2.xml)**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="debug">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+**3.具体使用**
+
+```java
+private static Logger logger=LoggerFactory.getLogger(Log4j2Slf4jTest.class);
+
+public static void main(String[] args){
+	if(logger.isTraceEnabled()){
+		logger.trace("slf4j-log4j2 trace message");
+	}
+	if(logger.isDebugEnabled()){
+		logger.debug("slf4j-log4j2 debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("slf4j-log4j2 info message");
+	}
+}
+```
+
+
+
+------
+
+
+
+- ### logback
+
+**1.maven依赖**
+
+```xml
+<dependency> 
+	<groupId>ch.qos.logback</groupId> 
+	<artifactId>logback-core</artifactId> 
+	<version>1.1.3</version> 
+</dependency> 
+<dependency> 
+    <groupId>ch.qos.logback</groupId> 
+    <artifactId>logback-classic</artifactId> 
+    <version>1.1.3</version> 
+</dependency>
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+```
+
+**2.配置文件(logback.xml)**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="DEBUG">          
+    <appender-ref ref="STDOUT" />
+  </root>  
+  
+</configuration>
+```
+
+**3.使用**
+
+```java
+private static final Logger logger=LoggerFactory.getLogger(LogbackTest.class);
+
+public static void main(String[] args){
+	if(logger.isDebugEnabled()){
+		logger.debug("slf4j-logback debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.debug("slf4j-logback info message");
+	}
+	if(logger.isTraceEnabled()){
+		logger.debug("slf4j-logback trace message");
+	}
+	
+	LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+    StatusPrinter.print(lc);
+}
+```
+
+### 
+
+- ### commons-logging与logback集成
+
+**1.maven依赖**
+
+```xml
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>jcl-over-slf4j</artifactId>
+	<version>1.7.12</version>
+</dependency>
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+<dependency> 
+	<groupId>ch.qos.logback</groupId> 
+	<artifactId>logback-core</artifactId> 
+	<version>1.1.3</version> 
+</dependency> 
+<dependency> 
+    <groupId>ch.qos.logback</groupId> 
+    <artifactId>logback-classic</artifactId> 
+    <version>1.1.3</version> 
+</dependency>
+```
+
+**2.配置文件(logback.xml)**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <root level="DEBUG">          
+    <appender-ref ref="STDOUT" />
+  </root>  
+</configuration>
+```
+
+**3.具体使用**
+
+```java
+private static Log logger=LogFactory.getLog(LogbackTest.class);
+
+public static void main(String[] args){
+	if(logger.isTraceEnabled()){
+		logger.trace("commons-logging-jcl trace message");
+	}
+	if(logger.isDebugEnabled()){
+		logger.debug("commons-logging-jcl debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("commons-logging-jcl info message");
+	}
+}
+```
+
+- ### slf4j与logback集成
+
+1.maven依赖
+
+```xml
+<!-- slf4j-api -->
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+<!-- logback -->
+<dependency> 
+	<groupId>ch.qos.logback</groupId> 
+	<artifactId>logback-core</artifactId> 
+	<version>1.1.3</version> 
+</dependency> 
+<dependency> 
+    <groupId>ch.qos.logback</groupId> 
+    <artifactId>logback-classic</artifactId> 
+    <version>1.1.3</version> 
+</dependency>
+```
+
+2.配置文件(logback.xml)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <root level="DEBUG">          
+    <appender-ref ref="STDOUT" />
+  </root>  
+</configuration>
+```
+
+3.具体使用
+
+```java
+private static final Logger logger=LoggerFactory.getLogger(LogbackTest.class);
+
+public static void main(String[] args){
+	if(logger.isDebugEnabled()){
+		logger.debug("slf4j-logback debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("slf4j-logback info message");
+	}
+	if(logger.isTraceEnabled()){
+		logger.trace("slf4j-logback trace message");
+	}
+}
+
+```
+
+
+
+------
+
+
+
+- ### slf4j与jdk-logging集成
+
+**1.maven依赖**
+
+```xml
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.12</version>
+</dependency>
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-jdk14</artifactId>
+	<version>1.7.12</version>
+</dependency>
+```
+
+**2.具体使用**
+
+```java
+private static final Logger logger=LoggerFactory.getLogger(JulSlf4jTest.class);
+
+public static void main(String[] args){
+	if(logger.isDebugEnabled()){
+		logger.debug("jul debug message");
+	}
+	if(logger.isInfoEnabled()){
+		logger.info("jul info message");
+	}
+	if(logger.isWarnEnabled()){
+		logger.warn("jul warn message");
+	}
+}
+```
+
 
 
