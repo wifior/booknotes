@@ -38,6 +38,42 @@ source /etc/profile
 
 
 
+- ### 错误汇总
+
+```shell
+# Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+systemctl daemon-reload
+systemctl restart docker.service
+
+
+```
+
+```shell
+FROM centos
+MAINTAINER The Centos and Jdk project <soft119@qq.com>
+
+```
+
+- ### Dockerfile
+
+```shell
+FROM centos:7
+
+MAINTAINER ghjun
+
+rum mkdir /opt/jdk
+
+workdir /opt/jdk
+# 把宿主机jar拷贝到容器中并解压
+add jdk-8u241-linux-x64.tar.gz /opt/jdk
+# 配置环境变量
+env JAVA_HOME /opt/jdk/jdk1.8.0_241
+env JRE_HOME /opt/jdk/jdk1.8.0_241/jre
+env PATH $JAVA_HOME/bin:$PATH
+# 宿主机当前目录下执行行命令创建镜像  
+docker build -t jdk1.8 .
+```
+
 
 
 
